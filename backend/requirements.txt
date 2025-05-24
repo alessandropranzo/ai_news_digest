@@ -1,2 +1,6 @@
 fastapi==0.110.0
 uvicorn[standard]==0.29.0
+
+# Database
+supabase==2.9.0
+mistralai==1.5.0
