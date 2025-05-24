@@ -13,7 +13,7 @@ const Navbar = () => {
         <div className="flex items-center">
           <Link to="/">
             <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-chloris-blue bg-clip-text text-transparent select-none cursor-pointer">
-              Chloris
+              AI News Digest
             </h1>
           </Link>
         </div>
@@ -28,18 +28,18 @@ const Navbar = () => {
                 : "bg-transparent text-foreground/80 hover:text-foreground")
             }
           >
-            <Link to="/">Home</Link>
+            <Link to="/">Feed</Link>
           </Button>
           <Button
             asChild
             className={
               `relative rounded-full h-10 px-6 font-semibold shadow-none transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:ring-offset-2 ` +
-              (location.pathname === "/grid-connector"
+              (location.pathname === "/settings"
                 ? "bg-gradient-to-r from-emerald-600 to-chloris-blue text-white shadow-none hover:shadow-lg hover:shadow-emerald-500/20 hover:scale-105"
                 : "bg-transparent text-foreground/80 hover:text-foreground")
             }
           >
-            
+            <Link to="/settings">Settings</Link>
           </Button>
         </div>
         {/* Mobile hamburger */}
@@ -64,29 +64,20 @@ const Navbar = () => {
                 }
                 onClick={() => setMenuOpen(false)}
               >
-                <Link to="/">Home</Link>
+                <Link to="/">Feed</Link>
               </Button>
               <Button
                 asChild
                 className={
                   `relative w-full justify-start px-4 py-2 rounded-full font-semibold shadow-none transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:ring-offset-2 mt-1 ` +
-                  (location.pathname === "/grid-connector"
+                  (location.pathname === "/settings"
                     ? "bg-gradient-to-r from-emerald-600 to-chloris-blue text-white shadow-none hover:shadow-lg hover:shadow-emerald-500/20 hover:scale-105"
                     : "bg-transparent text-foreground/80 hover:text-foreground")
                 }
                 onClick={() => setMenuOpen(false)}
               >
-                <Link
-                  to="/grid-connector"
-                  className="relative flex items-center"
-                >
-                  Grid Connector
-                  <span
-                    className="absolute -top-2 -right-4 bg-emerald-500 text-white text-[0.65rem] font-bold px-1.5 py-0.5 rounded-full shadow-md select-none"
-                    style={{ fontSize: "0.65rem", lineHeight: 1 }}
-                  >
-                    NEW
-                  </span>
+                <Link to="/settings" className="relative flex items-center">
+                  Settings
                 </Link>
               </Button>
             </div>
