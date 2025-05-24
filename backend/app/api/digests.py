@@ -1,4 +1,4 @@
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Union
 
 from fastapi import APIRouter, HTTPException, Query, Depends
 from pydantic import BaseModel, Field
@@ -7,6 +7,15 @@ import logging
 
 from app.services.supabase_client import get_supabase_client, fetch_digests
 
+# Pydantic models for source types, mirroring frontend/src/types/digest.ts
+class PydanticOutputWebNewsSource(BaseModel):
+    type: str # Literal["web", "news"] - Using str for broader compatibility with JSONB if needed
+    country: str
+    exclude_websites: List[str]
+
+class PydanticOutputXSource(BaseModel):
+    type: str # Literal["x"] - Using str
+    x_handles: List[str]
 
 class Digest(BaseModel):
     id_digests: int = Field(..., alias="id_digests")
@@ -16,11 +25,12 @@ class Digest(BaseModel):
     short_description: Optional[str] = None
     content: Optional[str] = None
     date: Optional[str] = None
-    sources: Optional[Any] = None
+    sources: Optional[List[Union[PydanticOutputWebNewsSource, PydanticOutputXSource]]] = None
     podcast: Optional[str] = None
     user_query: Optional[str] = None
     user_topics: Optional[str] = None
     user_other_preferences: Optional[str] = None
+    user_format_preference: Optional[str] = None
 
     class Config:
         populate_by_name = True

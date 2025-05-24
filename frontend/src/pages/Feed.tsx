@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Play, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Play,
+  ChevronDown,
+  ChevronUp,
+  Maximize2,
+  Minimize2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DigestSettingsModal from "@/components/modals/DigestSettingsModal";
 import { fetchDigests } from "@/api/apiClient";
@@ -107,39 +113,51 @@ const Feed = () => {
 
               <div className="flex items-start gap-4">
                 {/* Digest Card */}
-                <div className="flex-1 bg-muted/20 backdrop-blur-sm border border-border/30 rounded-lg p-6 shadow-lg hover:shadow-emerald-500/10 transition-shadow duration-300">
-                  <h2 className="text-lg font-semibold mb-2">
-                    Digest #{total - index}: {digest.title}
-                  </h2>
+                <div className="flex-1 bg-muted/20 backdrop-blur-sm border border-border/30 rounded-lg p-6 shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 ease-in-out flex flex-col">
+                  <div className="flex justify-between items-start mb-2">
+                    <h2 className="text-lg font-semibold">
+                      Digest #{total - index}: {digest.title}
+                    </h2>
+                    {/* More subtle expand button, part of the header now */}
+                    <Button
+                      variant="ghost" // Changed to ghost for subtlety
+                      size="icon" // Changed to icon size
+                      onClick={() => toggleExpand(digest.id_digests)}
+                      className="text-foreground/70 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-full -mr-2 -mt-2" // Adjusted margin for alignment
+                      aria-label={
+                        expandedDigests[digest.id_digests]
+                          ? "Collapse digest"
+                          : "Expand digest"
+                      }
+                    >
+                      {expandedDigests[digest.id_digests] ? (
+                        <Minimize2 className="w-5 h-5" />
+                      ) : (
+                        <Maximize2 className="w-5 h-5" />
+                      )}
+                    </Button>
+                  </div>
+
                   <p className="text-foreground/80 whitespace-pre-line mb-4">
-                    {digest.short_description ?? digest.content}
+                    {digest.short_description ??
+                      digest.content?.substring(0, 150) +
+                        (digest.content && digest.content.length > 150
+                          ? "..."
+                          : "")}
                   </p>
+
                   {expandedDigests[digest.id_digests] && digest.content && (
-                    <div className="mt-4 pt-4 border-t border-border/20">
+                    <div className="mt-4 pt-4 border-t border-border/20 animate-fadeIn">
                       <h3 className="text-md font-semibold mb-2 text-emerald-400">
-                        Full Content:
+                        Full Report:
                       </h3>
                       <p className="text-foreground/70 whitespace-pre-line">
                         {digest.content}
                       </p>
                     </div>
                   )}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => toggleExpand(digest.id_digests)}
-                    className="mt-4 text-emerald-500 border-emerald-500/50 hover:bg-emerald-500/10 hover:text-emerald-400"
-                  >
-                    {expandedDigests[digest.id_digests] ? (
-                      <>
-                        <ChevronUp className="w-4 h-4 mr-2" /> Collapse
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="w-4 h-4 mr-2" /> Expand
-                      </>
-                    )}
-                  </Button>
+
+                  {/* Removed the old expand button location. It's now in the card header. */}
                 </div>
 
                 {/* Play Button */}
