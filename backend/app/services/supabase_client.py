@@ -51,7 +51,7 @@ async def fetch_digests(client: Client) -> list[dict]:
         logger.error(f"An unexpected error occurred during digest fetch: {e}", exc_info=True)
         return []
 
-async def insert_data(client: Client, data: dict) -> dict | None:
+def insert_data(client: Client, data: dict) -> dict | None:
     """Inserts a new row into the specified table.
 
     Args:
@@ -63,7 +63,7 @@ async def insert_data(client: Client, data: dict) -> dict | None:
         The inserted data if successful, None otherwise.
     """
     try:
-        response: APIResponse = await client.table('digests').insert(data).execute()
+        response: APIResponse = client.table('digests').insert(data).execute()
 
         if response.data:
             logger.info(f"Successfully inserted data into digests: {response.data[0]}")
