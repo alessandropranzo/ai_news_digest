@@ -13,7 +13,7 @@ const Navbar = () => {
         <div className="flex items-center">
           <Link to="/">
             <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-chloris-blue bg-clip-text text-transparent select-none cursor-pointer">
-              Chloris
+              AI News Digest
             </h1>
           </Link>
         </div>
