@@ -30,17 +30,6 @@ const Navbar = () => {
           >
             <Link to="/">Feed</Link>
           </Button>
-          <Button
-            asChild
-            className={
-              `relative rounded-full h-10 px-6 font-semibold shadow-none transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:ring-offset-2 ` +
-              (location.pathname === "/settings"
-                ? "bg-gradient-to-r from-emerald-600 to-chloris-blue text-white shadow-none hover:shadow-lg hover:shadow-emerald-500/20 hover:scale-105"
-                : "bg-transparent text-foreground/80 hover:text-foreground")
-            }
-          >
-            <Link to="/settings">Settings</Link>
-          </Button>
         </div>
         {/* Mobile hamburger */}
         <div className="md:hidden flex items-center">
@@ -65,20 +54,6 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
               >
                 <Link to="/">Feed</Link>
-              </Button>
-              <Button
-                asChild
-                className={
-                  `relative w-full justify-start px-4 py-2 rounded-full font-semibold shadow-none transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:ring-offset-2 mt-1 ` +
-                  (location.pathname === "/settings"
-                    ? "bg-gradient-to-r from-emerald-600 to-chloris-blue text-white shadow-none hover:shadow-lg hover:shadow-emerald-500/20 hover:scale-105"
-                    : "bg-transparent text-foreground/80 hover:text-foreground")
-                }
-                onClick={() => setMenuOpen(false)}
-              >
-                <Link to="/settings" className="relative flex items-center">
-                  Settings
-                </Link>
               </Button>
             </div>
           )}

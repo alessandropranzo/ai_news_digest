@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import DigestSettingsModal from "@/components/modals/DigestSettingsModal";
 
 interface Digest {
   id: number;
@@ -58,7 +59,7 @@ const Feed = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground pt-20 pb-12">
       <main className="container mx-auto px-4 flex-1">
-        <h1 className="text-3xl font-bold mb-10">Daily Digests</h1>
+        <DigestSettingsModal />
         <div className="relative border-l-2 border-border/20 pl-8">
           {mockDigests.map((digest, index) => (
             <div key={digest.id} className="relative mb-12">
