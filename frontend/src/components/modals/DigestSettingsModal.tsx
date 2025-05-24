@@ -8,7 +8,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -25,7 +24,9 @@ import type {
   FinalOutputSource,
   OutputWebNewsSource,
   OutputXSource,
+  Digest,
 } from "../../types/digest";
+import { createDigest } from "../../api/apiClient";
 
 const AVAILABLE_TOPICS = [
   "AI",
@@ -77,16 +78,10 @@ type SourceConfigEntry = BaseSource & {
 };
 
 const DigestSettingsModal = () => {
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const [otherPrefs, setOtherPrefs] = useState("");
+  const [selectedTopics, setSelectedTopics] = useState<string>("");
   const [userFormatPreference, setUserFormatPreference] = useState("");
   const [sources, setSources] = useState<SourceConfigEntry[]>([]);
-
-  const toggleTopic = (topic: string) => {
-    setSelectedTopics((prev) =>
-      prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]
-    );
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   const addSource = () => {
     setSources([
@@ -202,7 +197,8 @@ const DigestSettingsModal = () => {
     );
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    setIsLoading(true);
     const finalSources: FinalOutputSource[] = sources
       .map((s) => {
         const { id, current_website_to_add, current_x_handle_to_add, ...rest } =
@@ -224,14 +220,34 @@ const DigestSettingsModal = () => {
       })
       .filter((s) => s !== null) as FinalOutputSource[];
 
-    const digestData = {
-      topics: selectedTopics.join(", "),
+    const digestDataToSave: Omit<
+      Digest,
+      "id_digests" | "created_at" | "digest_number"
+    > = {
+      user_topics: selectedTopics,
       user_format_preference: userFormatPreference,
       sources: finalSources,
-      user_other_preferences: otherPrefs,
     };
-    toast.success("Digest settings payload prepared (see console).");
-    console.log("Digest Data to be sent:", JSON.stringify(digestData, null, 2));
+
+    try {
+      console.log(
+        "Digest Data to be sent:",
+        JSON.stringify(digestDataToSave, null, 2)
+      );
+      const newDigest = await createDigest(digestDataToSave);
+      toast.success(
+        `Digest "${newDigest.title || "New Digest"}" created successfully!`
+      );
+    } catch (error) {
+      toast.error(
+        `Error creating digest: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+      console.error("Error creating digest:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -249,21 +265,14 @@ const DigestSettingsModal = () => {
 
         <section className="space-y-4 mt-4">
           <h2 className="text-md font-semibold">Select topics</h2>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {AVAILABLE_TOPICS.map((topic) => (
-              <label
-                key={topic}
-                className="flex items-center space-x-2 cursor-pointer"
-              >
-                <Checkbox
-                  checked={selectedTopics.includes(topic)}
-                  onCheckedChange={() => toggleTopic(topic)}
-                  id={`digest-${topic}`}
-                />
-                <Label htmlFor={`digest-${topic}`}>{topic}</Label>
-              </label>
-            ))}
-          </div>
+          <Textarea
+            placeholder={`Enter topics separated by commas (e.g., ${AVAILABLE_TOPICS.join(
+              ", "
+            )})`}
+            value={selectedTopics}
+            onChange={(e) => setSelectedTopics(e.target.value)}
+            className="min-h-[80px]"
+          />
         </section>
 
         <section className="space-y-2 mt-6">
@@ -471,17 +480,10 @@ const DigestSettingsModal = () => {
           )}
         </section>
 
-        <section className="space-y-2 mt-6">
-          <h2 className="text-md font-semibold">Other preferences (General)</h2>
-          <Textarea
-            placeholder="Describe any other general preferences (e.g., specific entities to follow, level of detail)..."
-            value={otherPrefs}
-            onChange={(e) => setOtherPrefs(e.target.value)}
-          />
-        </section>
-
         <div className="mt-6 flex justify-end">
-          <Button onClick={handleSave}>Run & Create Digest</Button>
+          <Button onClick={handleSave} disabled={isLoading}>
+            {isLoading ? "Creating..." : "Run & Create Digest"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

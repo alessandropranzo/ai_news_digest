@@ -25,3 +25,32 @@ export async function fetchDigests(limit?: number): Promise<Digest[]> {
   const data: Digest[] = await response.json();
   return data;
 }
+
+/**
+ * Create a new digest.
+ *
+ * @param digestData The data for the new digest.
+ */
+export async function createDigest(
+  digestData: Omit<Digest, "id_digests" | "created_at" | "digest_number">
+): Promise<Digest> {
+  const endpoint = `${
+    API_BASE_URL ? API_BASE_URL.replace(/\/$/, "") : ""
+  }/api/digests/create`;
+
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(digestData),
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(`Failed to create digest: ${response.status} ${message}`);
+  }
+
+  const createdDigest: Digest = await response.json();
+  return createdDigest;
+}

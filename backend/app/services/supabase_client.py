@@ -50,3 +50,30 @@ async def fetch_digests(client: Client) -> list[dict]:
     except Exception as e:
         logger.error(f"An unexpected error occurred during digest fetch: {e}", exc_info=True)
         return []
+
+def insert_data(client: Client, data: dict) -> dict | None:
+    """Inserts a new row into the specified table.
+
+    Args:
+        client: The Supabase client instance.
+        table_name: The name of the table to insert data into.
+        data: A dictionary representing the data to insert.
+
+    Returns:
+        The inserted data if successful, None otherwise.
+    """
+    try:
+        response: APIResponse = client.table('digests').insert(data).execute()
+
+        if response.data:
+            logger.info(f"Successfully inserted data into digests: {response.data[0]}")
+            return response.data[0]
+        elif hasattr(response, 'error') and response.error:
+            logger.error(f"Error inserting data into digests: {response.error.message if response.error else 'Unknown error'}")
+            return None
+        else:
+            logger.warning(f"No data returned after insert operation into digests, but no explicit error reported.")
+            return None
+    except Exception as e:
+        logger.error(f"An unexpected error occurred during insert operation into digests: {e}", exc_info=True)
+        return None
