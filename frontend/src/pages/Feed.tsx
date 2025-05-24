@@ -5,6 +5,10 @@ import {
   ChevronUp,
   Maximize2,
   Minimize2,
+  Speaker,
+  Voicemail,
+  PersonStandingIcon,
+  Speech,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DigestSettingsModal from "@/components/modals/DigestSettingsModal";
@@ -118,33 +122,48 @@ const Feed = () => {
                     <h2 className="text-lg font-semibold">
                       Digest #{total - index}: {digest.title}
                     </h2>
-                    {/* More subtle expand button, part of the header now */}
-                    <Button
-                      variant="ghost" // Changed to ghost for subtlety
-                      size="icon" // Changed to icon size
-                      onClick={() => toggleExpand(digest.id_digests)}
-                      className="text-foreground/70 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-full -mr-2 -mt-2" // Adjusted margin for alignment
-                      aria-label={
-                        expandedDigests[digest.id_digests]
-                          ? "Collapse digest"
-                          : "Expand digest"
-                      }
-                    >
-                      {expandedDigests[digest.id_digests] ? (
-                        <Minimize2 className="w-5 h-5" />
-                      ) : (
-                        <Maximize2 className="w-5 h-5" />
-                      )}
-                    </Button>
+                    {/* Wrapper for right-aligned buttons */}
+                    <div className="flex items-center">
+                      {/* More subtle expand button, part of the header now */}
+                      <Button
+                        variant="ghost" // Changed to ghost for subtlety
+                        size="icon" // Changed to icon size
+                        onClick={() => toggleExpand(digest.id_digests)}
+                        className="text-foreground/70 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-full" // Removed negative margins
+                        aria-label={
+                          expandedDigests[digest.id_digests]
+                            ? "Collapse digest"
+                            : "Expand digest"
+                        }
+                      >
+                        {expandedDigests[digest.id_digests] ? (
+                          <Minimize2 className="w-5 h-5" />
+                        ) : (
+                          <Maximize2 className="w-5 h-5" />
+                        )}
+                      </Button>
+                      {/* Voice Button - Styled for header */}
+                      <Button
+                        size="icon"
+                        variant="ghost" // Changed to ghost for consistency
+                        className="text-foreground/70 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-full ml-1" // Added margin-left for spacing
+                        aria-label="Play digest audio"
+                        onClick={() => handlePlay(digest)}
+                      >
+                        <Speech className="w-5 h-5" />
+                      </Button>
+                      {/* Play Button - Styled for header */}
+                      <Button
+                        size="icon"
+                        variant="ghost" // Changed to ghost for consistency
+                        className="text-foreground/70 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-full ml-1" // Added margin-left for spacing
+                        aria-label="Play digest audio"
+                        onClick={() => handlePlay(digest)}
+                      >
+                        <Play className="w-5 h-5" />
+                      </Button>
+                    </div>
                   </div>
-
-                  <p className="text-foreground/80 whitespace-pre-line mb-4">
-                    {digest.short_description ??
-                      digest.content?.substring(0, 150) +
-                        (digest.content && digest.content.length > 150
-                          ? "..."
-                          : "")}
-                  </p>
 
                   {expandedDigests[digest.id_digests] && digest.content && (
                     <div className="mt-4 pt-4 border-t border-border/20 animate-fadeIn">
@@ -159,17 +178,6 @@ const Feed = () => {
 
                   {/* Removed the old expand button location. It's now in the card header. */}
                 </div>
-
-                {/* Play Button */}
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  className="rounded-full shrink-0 bg-gradient-to-r from-emerald-600 to-chloris-blue text-white hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300"
-                  aria-label="Play digest audio"
-                  onClick={() => handlePlay(digest)}
-                >
-                  <Play className="w-5 h-5" />
-                </Button>
               </div>
             </div>
           ))}
