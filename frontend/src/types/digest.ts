@@ -1,13 +1,13 @@
 // These types are used for the final output structure of sources from the modal
 export interface OutputWebNewsSource {
   type: "web" | "news";
-  country: string;
-  exclude_websites: string[];
+  country: string | null;
+  exclude_websites: string[] | null;
 }
 
 export interface OutputXSource {
   type: "x";
-  x_handles: string[];
+  x_handles: string[] | null;
 }
 
 export type FinalOutputSource = OutputWebNewsSource | OutputXSource;
@@ -24,6 +24,5 @@ export interface Digest {
   podcast?: string;
   user_query?: string;
   user_topics?: string;
-  user_other_preferences?: string;
   user_format_preference?: string;
 }
