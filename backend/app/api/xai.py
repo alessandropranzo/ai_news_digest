@@ -16,7 +16,7 @@ def get_xai_response(digest_sources):
         "Content-Type": "application/json",
         "Authorization": f"Bearer {os.getenv('XAI_API_KEY')}"
     }
-    prompt = X_AI_PROMPT.format(topics=digest_sources["topics"], user_format_preference=digest_sources["user_format_preference"])
+    prompt = X_AI_PROMPT.format(topics=digest_sources["user_topics"], user_format_preference=digest_sources["user_format_preference"])
     print(prompt)
     payload = {
         "messages": [
