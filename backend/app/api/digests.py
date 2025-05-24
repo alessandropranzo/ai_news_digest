@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from fastapi import APIRouter, HTTPException, Query, Depends
 from pydantic import BaseModel, Field
@@ -16,7 +16,7 @@ class Digest(BaseModel):
     short_description: Optional[str] = None
     content: Optional[str] = None
     date: Optional[str] = None
-    sources: Optional[dict] = None
+    sources: Optional[Any] = None
     podcast: Optional[str] = None
     user_query: Optional[str] = None
     user_topics: Optional[str] = None
@@ -34,7 +34,7 @@ router = APIRouter(prefix="/digests", tags=["digests"])
 
 @router.get("", response_model=List[Digest])
 async def get_digests(
-    limit: Optional[int] = Query(default=None, ge=1),
+    
     supabase_client: Client = Depends(get_supabase_client)
 ):
     """Return a list of digests ordered by newest first.
@@ -42,9 +42,9 @@ async def get_digests(
     Args:
         limit: Optional limit of how many digests to return.
     """
-    logger.info(f"Received request to get digests. Limit: {limit}")
+
     try:
-        digests_data = await fetch_digests(client=supabase_client, limit=limit)
+        digests_data = await fetch_digests(client=supabase_client)
         logger.info(f"Successfully retrieved {len(digests_data)} digests.")
         return digests_data
     except Exception as e:

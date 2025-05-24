@@ -24,7 +24,7 @@ def get_supabase_client() -> Client:
         logger.error(f"Error creating Supabase client: {e}")
         raise
 
-async def fetch_digests(client: Client, limit: int | None = None) -> list[dict]:
+async def fetch_digests(client: Client) -> list[dict]:
     """Fetches digests from Supabase ordered by date (newest first).
 
     Args:
@@ -36,18 +36,14 @@ async def fetch_digests(client: Client, limit: int | None = None) -> list[dict]:
         `digests` table.
     """
     try:
-        query = client.table("digests").select("*")
-        if limit:
-            query = query.limit(limit)
-
-        response: APIResponse = query.execute()
+        response: APIResponse = client.table('digests').select('*').execute()
 
         if not response.data:
+             # Handle cases where data might be empty vs actual error if needed
             if hasattr(response, 'error') and response.error:
-                logger.error(f"Error fetching digests from Supabase: {response.error}")
-                return []
-            logger.info("No digests found in Supabase for the given query.")
-            return []
+                 print(f"Error fetching digests: {response.error}")
+                 return [] # Or raise an exception
+            return [] # No error, just no data
 
         logger.info(f"Successfully fetched {len(response.data)} digests from Supabase.")
         return response.data
