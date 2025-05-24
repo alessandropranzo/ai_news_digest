@@ -27,6 +27,7 @@ def get_xai_response(digest_sources):
         ],
         "search_parameters": {
             "mode": "auto",
+            "max_search_results": 30,
             "return_citations": True,
             "from_date": get_yesterday_iso8601(),
             "sources": digest_sources["sources"],
