@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Play } from "lucide-react";
+import { Play, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DigestSettingsModal from "@/components/modals/DigestSettingsModal";
 import { fetchDigests } from "@/api/apiClient";
@@ -17,6 +17,9 @@ const Feed = () => {
   const [digests, setDigests] = useState<FeedDigest[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [expandedDigests, setExpandedDigests] = useState<
+    Record<number, boolean>
+  >({});
 
   useEffect(() => {
     const loadDigests = async () => {
@@ -52,6 +55,13 @@ const Feed = () => {
     const audio = new Audio(digest.audioUrl);
     audio.play();
     setCurrentAudio(audio);
+  };
+
+  const toggleExpand = (digestId: number) => {
+    setExpandedDigests((prev) => ({
+      ...prev,
+      [digestId]: !prev[digestId],
+    }));
   };
 
   const formatDate = (iso?: string) => {
@@ -101,9 +111,35 @@ const Feed = () => {
                   <h2 className="text-lg font-semibold mb-2">
                     Digest #{total - index}: {digest.title}
                   </h2>
-                  <p className="text-foreground/80 whitespace-pre-line">
+                  <p className="text-foreground/80 whitespace-pre-line mb-4">
                     {digest.short_description ?? digest.content}
                   </p>
+                  {expandedDigests[digest.id_digests] && digest.content && (
+                    <div className="mt-4 pt-4 border-t border-border/20">
+                      <h3 className="text-md font-semibold mb-2 text-emerald-400">
+                        Full Content:
+                      </h3>
+                      <p className="text-foreground/70 whitespace-pre-line">
+                        {digest.content}
+                      </p>
+                    </div>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => toggleExpand(digest.id_digests)}
+                    className="mt-4 text-emerald-500 border-emerald-500/50 hover:bg-emerald-500/10 hover:text-emerald-400"
+                  >
+                    {expandedDigests[digest.id_digests] ? (
+                      <>
+                        <ChevronUp className="w-4 h-4 mr-2" /> Collapse
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="w-4 h-4 mr-2" /> Expand
+                      </>
+                    )}
+                  </Button>
                 </div>
 
                 {/* Play Button */}
