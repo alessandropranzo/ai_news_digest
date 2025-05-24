@@ -124,8 +124,8 @@ def create_digest_endpoint(
         # Ensure all fields required by Digest model are present in inserted_row
         # or provide defaults if they can be missing from Supabase response.
         # Pydantic will raise an error if required fields (id_digests, created_at) are missing.
-        response_digest = Digest(**inserted_row)
-        return response_digest
+        # response_digest = Digest(**inserted_row)
+        return inserted_row
 
     except HTTPException as he:
         logger.error(f"HTTP Exception in create_digest_endpoint: {he.detail}", exc_info=True)
