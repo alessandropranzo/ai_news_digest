@@ -1,18 +1,10 @@
 import os
 import requests
-from pydantic import BaseModel, Field
 from datetime import datetime, timedelta
 from prompts import X_AI_PROMPT
 from dotenv import load_dotenv
 
 load_dotenv()
-
-class XAIDigest(BaseModel):
-    title: str = Field(description="The title of the digest")
-    summary: str = Field(description="The summary of the digest")
-    content: str = Field(description="The content of the digest")
-
-
 
 def get_yesterday_iso8601():
     yesterday = datetime.now() - timedelta(days=1)
@@ -36,7 +28,7 @@ def get_xai_response(digest_sources):
         "search_parameters": {
             "mode": "auto",
             "return_citations": True,
-            "from_date": "2025-05-21", #get_yesterday_iso8601(),
+            "from_date": get_yesterday_iso8601(),
             "sources": digest_sources["sources"],
         },
         "model": "grok-3-latest",
