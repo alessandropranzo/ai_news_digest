@@ -39,15 +39,7 @@ const Navbar = () => {
                 : "bg-transparent text-foreground/80 hover:text-foreground")
             }
           >
-            <Link to="/grid-connector" className="relative flex items-center">
-              Grid Connector
-              <span
-                className="absolute -top-2 -right-4 bg-emerald-500 text-white text-[0.65rem] font-bold px-1.5 py-0.5 rounded-full shadow-md select-none"
-                style={{ fontSize: "0.65rem", lineHeight: 1 }}
-              >
-                NEW
-              </span>
-            </Link>
+            
           </Button>
         </div>
         {/* Mobile hamburger */}
