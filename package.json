@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@types/markdown-to-jsx": "^7.0.0",
+    "markdown-to-jsx": "^7.7.6",
+    "react-markdown": "^10.1.0"
+  }
+}

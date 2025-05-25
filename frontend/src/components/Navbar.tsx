@@ -13,7 +13,7 @@ const Navbar = () => {
         <div className="flex items-center">
           <Link to="/">
             <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-chloris-blue bg-clip-text text-transparent select-none cursor-pointer">
-              AI News Digest
+              My Journalist
             </h1>
           </Link>
         </div>
@@ -39,7 +39,7 @@ const Navbar = () => {
                 : "bg-transparent text-foreground/80 hover:text-foreground")
             }
           >
-            <Link to="/journalist">My Journalist</Link>
+            <Link to="/journalist">Eva</Link>
           </Button>
         </div>
         {/* Mobile hamburger */}
@@ -76,7 +76,7 @@ const Navbar = () => {
                 }
                 onClick={() => setMenuOpen(false)}
               >
-                <Link to="/journalist">My Journalist</Link>
+                <Link to="/journalist">Eva</Link>
               </Button>
             </div>
           )}

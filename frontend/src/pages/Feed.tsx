@@ -18,6 +18,7 @@ import type { Digest } from "@/types/digest";
 interface FeedDigest extends Digest {
   // Front-end helper properties if needed in the future
   audioUrl?: string; // placeholder until you store podcast URL in DB
+  contentHtml?: string; // Added for server-rendered HTML
 }
 
 const Feed = () => {
@@ -142,6 +143,15 @@ const Feed = () => {
                           <Maximize2 className="w-5 h-5" />
                         )}
                       </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost" // Changed to ghost for consistency
+                        className="text-foreground/70 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-full ml-1" // Added margin-left for spacing
+                        aria-label="Play digest audio"
+                        onClick={() => handlePlay(digest)}
+                      >
+                        <Play className="w-5 h-5" />
+                      </Button>
                       {/* Voice Button - Styled for header */}
                       <Button
                         size="icon"
@@ -153,26 +163,19 @@ const Feed = () => {
                         <Speech className="w-5 h-5" />
                       </Button>
                       {/* Play Button - Styled for header */}
-                      <Button
-                        size="icon"
-                        variant="ghost" // Changed to ghost for consistency
-                        className="text-foreground/70 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-full ml-1" // Added margin-left for spacing
-                        aria-label="Play digest audio"
-                        onClick={() => handlePlay(digest)}
-                      >
-                        <Play className="w-5 h-5" />
-                      </Button>
+                      
                     </div>
                   </div>
 
-                  {expandedDigests[digest.id_digests] && digest.content && (
+                  {expandedDigests[digest.id_digests] && digest.contentHtml && (
                     <div className="mt-4 pt-4 border-t border-border/20 animate-fadeIn">
                       <h3 className="text-md font-semibold mb-2 text-emerald-400">
                         Full Report:
                       </h3>
-                      <p className="text-foreground/70 whitespace-pre-line">
-                        {digest.content}
-                      </p>
+                      <div
+                        className="prose prose-sm dark:prose-invert max-w-none text-foreground/70 whitespace-pre-line"
+                        dangerouslySetInnerHTML={{ __html: digest.contentHtml }}
+                      />
                     </div>
                   )}
 
