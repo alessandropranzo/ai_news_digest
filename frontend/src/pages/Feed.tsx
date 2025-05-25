@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DigestSettingsModal from "@/components/modals/DigestSettingsModal";
+import ConversationModal from "@/components/modals/ConversationModal";
 import { fetchDigests } from "@/api/apiClient";
 import type { Digest } from "@/types/digest";
 
@@ -20,6 +21,8 @@ interface FeedDigest extends Digest {
   audioUrl?: string; // placeholder until you store podcast URL in DB
   contentHtml?: string; // Added for server-rendered HTML
 }
+
+const FEED_AGENT_ID = "agent_01jw35p30ffgy9ydkkw3ky3r6m"; // Agent ID provided by user
 
 const Feed = () => {
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(
@@ -31,6 +34,7 @@ const Feed = () => {
   const [expandedDigests, setExpandedDigests] = useState<
     Record<number, boolean>
   >({});
+  const [isConversationModalOpen, setIsConversationModalOpen] = useState(false); // State for modal
 
   useEffect(() => {
     const loadDigests = async () => {
@@ -73,6 +77,14 @@ const Feed = () => {
       ...prev,
       [digestId]: !prev[digestId],
     }));
+  };
+
+  const openConversationModal = () => {
+    setIsConversationModalOpen(true);
+  };
+
+  const closeConversationModal = () => {
+    setIsConversationModalOpen(false);
   };
 
   const formatDate = (iso?: string) => {
@@ -157,13 +169,12 @@ const Feed = () => {
                         size="icon"
                         variant="ghost" // Changed to ghost for consistency
                         className="text-foreground/70 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-full ml-1" // Added margin-left for spacing
-                        aria-label="Play digest audio"
-                        onClick={() => handlePlay(digest)}
+                        aria-label="Open conversation agent" // Changed aria-label
+                        onClick={openConversationModal} // Open modal on click
                       >
                         <Speech className="w-5 h-5" />
                       </Button>
                       {/* Play Button - Styled for header */}
-                      
                     </div>
                   </div>
 
@@ -186,6 +197,11 @@ const Feed = () => {
           ))}
         </div>
       </main>
+      <ConversationModal
+        isOpen={isConversationModalOpen}
+        onClose={closeConversationModal}
+        agentId={FEED_AGENT_ID}
+      />
     </div>
   );
 };
