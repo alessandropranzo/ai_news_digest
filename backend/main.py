@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Import routers
 from app.api.digests import router as digests_router
+from app.api.podcast import router as podcast_data_router
 
 app = FastAPI(title="AI News Digest API")
 
@@ -17,6 +18,7 @@ app.add_middleware(
 
 # Register routers under /api prefix
 app.include_router(digests_router, prefix="/api")
+app.include_router(podcast_data_router, prefix="/api/data")
 
 
 @app.get("/", tags=["root"])
