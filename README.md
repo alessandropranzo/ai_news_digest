@@ -25,6 +25,9 @@ Welcome to **My Journalist** – your AI-powered news digest, tailored from the 
         print("ffprobe ->", utils.which("ffprobe"))
         ```
         If you see a valid path for both ffmpeg and ffprobe, you're good to go. If you see None, installation likely failed.
+- Install `pyaudio`: 
+    - Homebrew (macOS/Linus): `brew install pyaudio`
+    - Conda (cross-platform): `pip install pyaudio`
 
 - Install dependencies with 
 ```bash
@@ -36,7 +39,4 @@ pip install -r requirements.txt
 
 # Tech Stack
 
-
-
-
-
+![Diagram](/assets/tech-stack-diagram.png)
