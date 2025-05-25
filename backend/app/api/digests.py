@@ -87,10 +87,20 @@ def create_digest_endpoint(
         xai_result_json = get_xai_response(xai_input_data) # This is a synchronous call
         logger.info(f"Raw XAI response: {xai_result_json}")
 
-        title = "test"
-        summary = "test"
+        # Generate title from user_topics
+        if payload.user_topics:
+            topics_list = [topic.strip() for topic in payload.user_topics.split(',') if topic.strip()]
+            title = ", ".join(topics_list) if topics_list else "General Digest"
+        else:
+            title = "General Digest"
+
+        # summary = "test" # This will be replaced by XAI output later. We can use a part of the content or generate a separate summary.
+        # For now, let's use the first few words of the content as a placeholder summary if XAI doesn't provide one.
         content_from_xai = xai_result_json['choices'][0]["message"]["content"]
         logger.info(f"Raw content_from_xai (type: {type(content_from_xai)}): {content_from_xai[:500]}...")
+
+        # Placeholder for summary - you might want to get this from XAI or generate it
+        summary = ' '.join(content_from_xai.split()[:20]) + "..." if content_from_xai else "No summary available."
 
         # Prepare the base data for insertion first
         data_to_insert = {
