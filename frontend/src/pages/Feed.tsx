@@ -15,6 +15,7 @@ import DigestSettingsModal from "@/components/modals/DigestSettingsModal";
 import ConversationModal from "@/components/modals/ConversationModal";
 import { fetchDigests } from "@/api/apiClient";
 import type { Digest } from "@/types/digest";
+import "@/styles/feed-typography.css"; // Import the new CSS file
 
 interface FeedDigest extends Digest {
   // Front-end helper properties if needed in the future
@@ -194,7 +195,7 @@ const Feed = () => {
                             Full Report:
                           </h3>
                           <div
-                            className="prose prose-sm dark:prose-invert max-w-none text-foreground/70 whitespace-pre-line"
+                            className="prose prose-sm dark:prose-invert max-w-none text-foreground/70 whitespace-pre-line digest-content-area"
                             dangerouslySetInnerHTML={{
                               __html: digest.contentHtml,
                             }}
