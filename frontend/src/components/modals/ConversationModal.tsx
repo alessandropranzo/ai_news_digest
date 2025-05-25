@@ -1,16 +1,52 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 interface ConversationModalProps {
   isOpen: boolean;
   onClose: () => void;
   agentId: string;
+  digestId?: number;
 }
 
 const ConversationModal: React.FC<ConversationModalProps> = ({
   isOpen,
   onClose,
   agentId,
+  digestId,
 }) => {
+  useEffect(() => {
+    if (isOpen && agentId && digestId !== undefined) {
+      const startConversation = async () => {
+        try {
+          const response = await fetch("/api/agents", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ agent_id: agentId, id_digest: digestId }),
+          });
+          if (!response.ok) {
+            console.error(
+              "Failed to start conversation:",
+              await response.text()
+            );
+            // Optionally, update UI to show an error to the user
+          } else {
+            console.log(
+              "Conversation started successfully for digest:",
+              digestId
+            );
+            // Backend handles the long-running conversation task
+          }
+        } catch (error) {
+          console.error("Error starting conversation:", error);
+          // Optionally, update UI to show an error to the user
+        }
+      };
+
+      startConversation();
+    }
+  }, [isOpen, agentId, digestId]);
+
   if (!isOpen) {
     return null;
   }
@@ -29,7 +65,12 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
           </button>
         </div>
         <div>
-          <elevenlabs-convai agent-id={agentId}></elevenlabs-convai><script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+          <elevenlabs-convai agent-id={agentId}></elevenlabs-convai>
+          <script
+            src="https://elevenlabs.io/convai-widget/index.js"
+            async
+            type="text/javascript"
+          ></script>
           {/* The script will be loaded in the main HTML or via a useEffect hook if preferred */}
         </div>
         <div className="mt-6 text-right">

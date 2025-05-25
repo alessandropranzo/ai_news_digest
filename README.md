@@ -29,16 +29,31 @@ Welcome to **My Journalist** – your AI-powered news digest, tailored from the 
         If you see a valid path for both ffmpeg and ffprobe, you're good to go. If you see None, installation likely failed.
 - Install `pyaudio`: 
     - Homebrew (macOS/Linus): `brew install pyaudio`
-    - Conda (cross-platform): `pip install pyaudio`
+    - Pip (cross-platform, but did not work for us on Unix): `pip install pyaudio`
 
 - Install dependencies with 
-```bash
-pip install -r requirements.txt
-``` 
+    ```bash
+    pip install -r requirements.txt
+    ``` 
 
-## 🎨 Frontend
-- TODO
+## 🎨 Frontend Requirements
+- Install dependencies with 
+    ```bash
+    cd frontend
+    npm i
+    ```
+
+- Start the development server with
+    ```bash
+    npm run dev
+    ```
+the app will be available at [http://localhost:8080](http://localhost:8080). After launching the app, you can start (in another terminal) the backend with:
+```bash
+    cd backend
+    uvicorn main:app --reload
+```
 
 # Tech Stack
 
 ![Diagram](/assets/tech-stack-diagram.png)
+(zoom in to see the details)

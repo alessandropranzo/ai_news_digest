@@ -23,6 +23,7 @@ export interface Digest {
   date?: string;
   sources?: FinalOutputSource[];
   podcast?: string;
+  transcript_file_path?: string;
   user_query?: string;
   user_topics?: string;
   user_format_preference?: string;
