@@ -7,15 +7,17 @@ from elevenlabs.conversational_ai.default_audio_interface import DefaultAudioInt
 from dotenv import load_dotenv
 load_dotenv()
 
-def client_init(agent_id_name: str, api_key_name: str) -> tuple:
+agent_id = 'agent_01jw19sps2fewsg3g3bqbpmd8y'
+api_key = os.getenv('ELEVENLABS_API_KEY')
 
-    agent_id = 'agent_01jw19sps2fewsg3g3bqbpmd8y'
-    api_key = os.getenv(api_key_name)
+dynamical_vars = {
+    "id_digest": 3
+}
+
+def start_conversation_single_digest(dynamical_vars: dict) -> None:
+
     elevenlabs = ElevenLabs(api_key=api_key)
 
-    return elevenlabs, agent_id
-
-def conversation_init(elevenlabs: ElevenLabs, agent_id: str, dynamical_vars: dict) -> Conversation:
     config = ConversationInitiationData(
         dynamic_variables=dynamical_vars
     )
@@ -23,6 +25,7 @@ def conversation_init(elevenlabs: ElevenLabs, agent_id: str, dynamical_vars: dic
         elevenlabs,
         agent_id,
         config=config,
+        requires_auth=True,
         audio_interface=DefaultAudioInterface(),
 
         callback_agent_response=lambda response: print(f"Agent: {response}"),
@@ -30,12 +33,8 @@ def conversation_init(elevenlabs: ElevenLabs, agent_id: str, dynamical_vars: dic
         callback_user_transcript=lambda transcript: print(f"User: {transcript}"),
     )
 
-    return conversation
-
-def conversation(agent_id_name: str, api_key_name: str, dynamical_vars: dict):
-
-    elevenlabs, agent_id = client_init(agent_id_name, api_key_name)
-    conversation = conversation_init(elevenlabs, agent_id, dynamical_vars)
-
     conversation.start_session()
     signal.signal(signal.SIGINT, lambda sig, frame: conversation.end_session())
+    signal.pause()
+
+start_conversation_single_digest(dynamical_vars)
