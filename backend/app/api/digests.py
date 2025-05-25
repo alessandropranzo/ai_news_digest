@@ -1,6 +1,8 @@
 from typing import List, Optional, Any, Union
 from datetime import datetime
 import json
+import markdown2
+import bleach
 
 from fastapi import APIRouter, HTTPException, Query, Depends
 from pydantic import BaseModel, Field
@@ -38,6 +40,7 @@ class Digest(BaseModel):
     user_query: Optional[str] = None
     user_topics: Optional[str] = None
     user_format_preference: Optional[str] = None
+    contentHtml: Optional[str] = None
 
     class Config:
         populate_by_name = True
@@ -46,6 +49,24 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/digests", tags=["digests"])
+
+# Define allowed HTML tags and attributes for bleach
+ALLOWED_TAGS_EXTENDED = bleach.ALLOWED_TAGS | {
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'br', 'hr', 'pre', 'img', 'figure', 'figcaption',
+    'span', 'div', 'strong', 'em', 'blockquote', 'ul', 'ol', 'li', 'code',
+    'table', 'thead', 'tbody', 'tr', 'th', 'td'
+}
+ALLOWED_ATTRIBUTES_EXTENDED = {
+    **bleach.ALLOWED_ATTRIBUTES,
+    'img': ['src', 'alt', 'title'],
+    'pre': ['class'], # for syntax highlighting
+    'code': ['class'], # for inline code or syntax highlighting
+    '*': ['id'], # allow id on any tag for linking/anchors
+    'table': ['summary'],
+    'th': ['scope'],
+    'td': ['headers']
+}
 
 @router.post("/create", response_model=Digest, status_code=201)
 def create_digest_endpoint(
@@ -66,51 +87,41 @@ def create_digest_endpoint(
         xai_result_json = get_xai_response(xai_input_data) # This is a synchronous call
         logger.info(f"Raw XAI response: {xai_result_json}")
 
-        title = "Culo Bello"
-        summary = "Mi piace il culo così tanto che lo annuso anche con tutta la merda, perche le francesi non se lo lavano dato che non hanno il bidet"
+        title = "test"
+        summary = "test"
         content_from_xai = xai_result_json['choices'][0]["message"]["content"]
+        logger.info(f"Raw content_from_xai (type: {type(content_from_xai)}): {content_from_xai[:500]}...")
 
-        # if xai_result_json and xai_result_json.get('choices') and len(xai_result_json['choices']) > 0:
-        #     message = xai_result_json['choices'][0].get('message')
-        #     if message and message.get('content'):
-        #         xai_content_str = message['content']
-        #         logger.info(f"XAI message content string: {xai_content_str}")
-        #         try:
-        #             parsed_xai_content = json.loads(xai_content_str)
-        #             if isinstance(parsed_xai_content, dict):
-        #                 # Extract title, summary, content if available, otherwise use defaults
-        #                 title = "culo"
-        #                 summary = "culohhh"
-        #                 content_from_xai = parsed_xai_content # Default to full string if 'content' key not in dict
-        #                 logger.info(f"Attempted to parse XAI content as JSON dictionary. Title='{title}', Summary='{summary}'")
-        #             else:
-        #                 # Parsed JSON is not a dictionary, treat as simple string content
-        #                 logger.info("XAI content parsed as JSON, but not a dictionary. Using raw string as main content.")
-        #                 content_from_xai = parsed_xai_content
-        #         except json.JSONDecodeError:
-        #             logger.warning(f"Failed to parse XAI content as JSON. Using raw string as content: {xai_content_str}")
-        #             content_from_xai = parsed_xai_content
-        #         except Exception as e: # Catch other potential errors during parsing or .get calls
-        #             logger.error(f"Error processing XAI content: {e}. Using raw string as content: {xai_content_str}")
-        #             content_from_xai = parsed_xai_content
-                
-        #         # Consolidate title generation: if title is still default and topics exist
-        #         if title == "Untitled Digest" and payload.user_topics:
-        #             title = f"Digest on: {payload.user_topics}"
-        #     else:
-        #         logger.warning("XAI response did not contain expected message.content structure.")
-        # else:
-        #     logger.warning("XAI response did not contain choices or was empty.")
-
+        # Prepare the base data for insertion first
         data_to_insert = {
             "user_topics": payload.user_topics,
             "user_format_preference": payload.user_format_preference,
             "sources": [s.model_dump(exclude_none=True) for s in payload.sources] if payload.sources else [],
             "title": title,
             "short_description": summary,
-            "content": content_from_xai,
+            "content": content_from_xai, # Store raw markdown
             "date": datetime.now().isoformat(),
+            "contentHtml": None # Initialize to None, will be updated below
         }
+
+        # Convert content to HTML and sanitize it, then update data_to_insert
+        if content_from_xai:
+            logger.info("Entering content_from_xai block for HTML generation.")
+            html_output = markdown2.markdown(content_from_xai, extras=["tables", "fenced-code-blocks", "strike", "nofollow"])
+            logger.info(f"html_output from markdown2 (type: {type(html_output)}): {str(html_output)[:500]}...")
+            
+            sanitized_html = bleach.clean(
+                html_output,
+                tags=ALLOWED_TAGS_EXTENDED,
+                attributes=ALLOWED_ATTRIBUTES_EXTENDED,
+                strip=True
+            )
+            logger.info(f"sanitized_html from bleach (type: {type(sanitized_html)}): {str(sanitized_html)[:500]}...")
+            data_to_insert["contentHtml"] = sanitized_html # Update the dictionary
+        else:
+            logger.info("Skipped HTML generation because content_from_xai was falsy.")
+            # data_to_insert["contentHtml"] remains None as initialized
+
         logger.info(f"Data to insert into Supabase: {data_to_insert}")
 
         inserted_row = insert_data(client=supabase_client, data=data_to_insert)
@@ -146,7 +157,24 @@ async def get_digests(
     try:
         digests_data = await fetch_digests(client=supabase_client)
         logger.info(f"Successfully retrieved {len(digests_data)} digests.")
-        return digests_data
+
+        processed_digests = []
+        for digest_dict in digests_data:
+            raw_markdown = digest_dict.get("content")
+            if raw_markdown:
+                html_output = markdown2.markdown(raw_markdown, extras=["tables", "fenced-code-blocks", "strike", "nofollow"])
+                sanitized_html = bleach.clean(
+                    html_output,
+                    tags=ALLOWED_TAGS_EXTENDED,
+                    attributes=ALLOWED_ATTRIBUTES_EXTENDED,
+                    strip=True # Remove disallowed tags completely
+                )
+                digest_dict["contentHtml"] = sanitized_html
+            else:
+                digest_dict["contentHtml"] = None # Ensure the field exists even if content is null
+            processed_digests.append(Digest(**digest_dict)) # Validate and cast to Pydantic model
+
+        return processed_digests
     except Exception as e:
         logger.error(f"Error fetching digests: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error fetching digests")
