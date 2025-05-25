@@ -120,8 +120,8 @@ const Feed = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground pt-20 pb-12">
-      <main className="container mx-auto px-4 flex-1">
+    <div className="min-h-screen flex flex-col bg-background text-foreground pt-16 sm:pt-20 pb-12">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 flex-1">
         <DigestSettingsModal
           isOpen={isDigestSettingsModalOpen}
           onOpenChange={setIsDigestSettingsModalOpen}
@@ -130,7 +130,7 @@ const Feed = () => {
             loadDigests(); // Refresh digests
           }}
         />
-        <div className="relative border-l-2 border-border/20 pl-8">
+        <div className="relative border-l-2 border-border/20 pl-12 sm:pl-14 md:pl-16">
           {digests.map((digest, index) => {
             if (digest.id_digests === 14) {
               console.log(
@@ -139,19 +139,19 @@ const Feed = () => {
               );
             }
             return (
-              <div key={digest.id_digests} className="relative mb-12">
+              <div key={digest.id_digests} className="relative mb-10 sm:mb-12">
                 {/* Timeline node */}
                 <span className="absolute -left-[9px] top-2 w-3 h-3 rounded-full bg-emerald-500" />
-                {/* Date label */}
-                <div className="absolute -left-24 top-1 text-sm font-medium select-none">
+                {/* Date label - responsive positioning */}
+                <div className="absolute -left-11 sm:-left-12 md:-left-13 top-1 text-xs sm:text-sm font-medium select-none">
                   {formatDate(digest.date)}
                 </div>
 
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-3 sm:gap-4">
                   {/* Digest Card */}
-                  <div className="flex-1 bg-muted/20 backdrop-blur-sm border border-border/30 rounded-lg p-6 shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 ease-in-out flex flex-col">
+                  <div className="flex-1 bg-muted/20 backdrop-blur-sm border border-border/30 rounded-lg p-4 sm:p-6 shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 ease-in-out flex flex-col">
                     <div className="flex justify-between items-start mb-2">
-                      <h2 className="text-lg font-semibold">
+                      <h2 className="text-base sm:text-lg font-semibold pr-2">
                         Digest #{total - index}: {digest.title}
                       </h2>
                       {/* Wrapper for right-aligned buttons */}
