@@ -2,6 +2,8 @@
 
 Welcome to **My Journalist** – your AI-powered news digest, tailored from the sources you trust.
 
+**IMPORTANT**: see this demo video [![SORRY GUYS BUT THE AUDIO DIDN'T RENDER](assets/Screenshot%202025-05-25%20144242.png)](https://youtu.be/fWzd_hJSgCc?si=QZzBwv_nikf1GPwr)
+
 # ⚙️ Setup
 
 > *If you run into any issues, don’t hesitate to reach out to us!*
