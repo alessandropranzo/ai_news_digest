@@ -1,0 +1,83 @@
+/* frontend/src/styles/feed-typography.css */
+
+/* Apply a slightly brighter base text color for better readability within the digest content */
+.digest-content-area {
+  /* Uses CSS variables that should be defined by your theme (e.g., Shadcn UI) */
+  color: hsl(var(--foreground) / 0.85);
+  text-align: left; /* Ensure overall container content tends left */
+}
+
+.digest-content-area h1 {
+  font-size: 1.875rem; /* Tailwind text-3xl */
+  line-height: 2.25rem;
+  font-weight: 700; /* Tailwind font-bold */
+  margin-bottom: 0.75rem; /* Reduced from 1.5rem */
+  color: #34d399; /* Emerald-400, a bright accent for the main title */
+  text-align: left;
+  margin-left: 0;
+}
+
+.digest-content-area h2 {
+  font-size: 1.5rem; /* Tailwind text-2xl */
+  line-height: 2rem;
+  font-weight: 600; /* Tailwind font-semibold */
+  margin-top: 1.25rem; /* Reduced from 2rem */
+  margin-bottom: 0.5rem; /* Reduced from 1rem */
+  color: #6ee7b7; /* Emerald-300, slightly softer for section titles */
+  border-bottom: 1px solid hsl(var(--border) / 0.4); /* Subtle underline */
+  padding-bottom: 0.25rem; /* Reduced from 0.5rem */
+  text-align: left;
+  margin-left: 0;
+}
+
+.digest-content-area ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin-bottom: 0.75rem; /* Reduced from 1rem */
+  text-align: left;
+}
+
+.digest-content-area li {
+  margin-bottom: 0.5rem; /* Reduced from 0.75rem */
+  padding-left: 0.5rem;
+  /* text-align: left; will be inherited */
+}
+
+/* Styles for bolded headlines within list items, e.g., <strong>Google Unveils...</strong> */
+.digest-content-area li strong {
+  font-weight: 600;
+  color: hsl(var(--foreground) / 0.95); /* Make it stand out */
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* Styles for italicized source text, e.g., <em>Source: ...</em> */
+.digest-content-area li em {
+  font-style: italic;
+  font-size: 0.875em; /* Slightly smaller than parent li text */
+  color: hsl(var(--foreground) / 0.6);
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.digest-content-area a {
+  color: #10b981; /* Emerald-500 for links */
+  text-decoration: underline;
+  transition: color 0.2s ease-in-out;
+}
+
+.digest-content-area a:hover {
+  color: #34d399; /* Emerald-400 on hover */
+}
+
+.digest-content-area p {
+  margin-bottom: 0.75rem; /* Reduced from 1rem */
+  line-height: 1.625; /* Relaxed line height for readability */
+  text-align: left;
+}
+
+/* Remove default browser margin for h1, h2 inside this area if prose doesn't handle it well enough */
+.digest-content-area h1:first-child,
+.digest-content-area h2:first-child {
+  margin-top: 0;
+}

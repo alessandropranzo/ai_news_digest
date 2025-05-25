@@ -19,6 +19,7 @@ export interface Digest {
   title?: string;
   short_description?: string;
   content?: string;
+  contentHtml?: string;
   date?: string;
   sources?: FinalOutputSource[];
   podcast?: string;
