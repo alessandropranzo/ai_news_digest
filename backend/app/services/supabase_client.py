@@ -56,13 +56,14 @@ def insert_data(client: Client, data: dict) -> dict | None:
 
     Args:
         client: The Supabase client instance.
-        table_name: The name of the table to insert data into.
         data: A dictionary representing the data to insert.
 
     Returns:
         The inserted data if successful, None otherwise.
     """
     try:
+        logger.info(f"Data received by insert_data function: {data}")
+
         response: APIResponse = client.table('digests').insert(data).execute()
 
         if response.data:
