@@ -77,11 +77,24 @@ type SourceConfigEntry = BaseSource & {
   current_x_handle_to_add?: string;
 };
 
-const DigestSettingsModal = () => {
+interface DigestSettingsModalProps {
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  onDigestCreated: () => void;
+}
+
+const DigestSettingsModal = ({
+  isOpen,
+  onOpenChange,
+  onDigestCreated,
+}: DigestSettingsModalProps) => {
   const [selectedTopics, setSelectedTopics] = useState<string>("");
   const [userFormatPreference, setUserFormatPreference] = useState("");
   const [sources, setSources] = useState<SourceConfigEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const formatPreferenceTemplate =
+    "Please organize the digest with the following sections:\n1. Introduction (here you insert the headlines of the day, giving an overview of the day in the news). \n2 A new section for each topic. For each section, include 2-3 key stories with detailed summaries of the single pieces of news.";
 
   const addSource = () => {
     setSources([
@@ -238,6 +251,8 @@ const DigestSettingsModal = () => {
       toast.success(
         `Digest "${newDigest.title || "New Digest"}" created successfully!`
       );
+      onDigestCreated();
+      onOpenChange(false);
     } catch (error) {
       toast.error(
         `Error creating digest: ${
@@ -251,7 +266,7 @@ const DigestSettingsModal = () => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button className="mb-10">Create New Digest</Button>
       </DialogTrigger>
@@ -276,7 +291,16 @@ const DigestSettingsModal = () => {
         </section>
 
         <section className="space-y-2 mt-6">
-          <h2 className="text-md font-semibold">Format Preference</h2>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-md font-semibold">Format Preference</h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setUserFormatPreference(formatPreferenceTemplate)}
+            >
+              Use Template
+            </Button>
+          </div>
           <Textarea
             placeholder="Describe your preferred formatting for the digest (e.g., bullet points, concise summaries, tone)..."
             value={userFormatPreference}

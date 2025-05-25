@@ -36,28 +36,30 @@ const Feed = () => {
     Record<number, boolean>
   >({});
   const [isConversationModalOpen, setIsConversationModalOpen] = useState(false); // State for modal
+  const [isDigestSettingsModalOpen, setIsDigestSettingsModalOpen] =
+    useState(false);
+
+  const loadDigests = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchDigests();
+      // Ensure newest first (backend already does, but double-check)
+      data.sort((a, b) =>
+        (b.created_at ?? "").localeCompare(a.created_at ?? "")
+      );
+      const enhanced = data.map((d) => ({
+        ...d,
+        audioUrl: d.podcast ?? "#", // placeholder until real URL is available
+      }));
+      setDigests(enhanced);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadDigests = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchDigests();
-        // Ensure newest first (backend already does, but double-check)
-        data.sort((a, b) =>
-          (b.created_at ?? "").localeCompare(a.created_at ?? "")
-        );
-        const enhanced = data.map((d) => ({
-          ...d,
-          audioUrl: d.podcast ?? "#", // placeholder until real URL is available
-        }));
-        setDigests(enhanced);
-      } catch (e) {
-        setError((e as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadDigests();
   }, []);
 
@@ -120,7 +122,14 @@ const Feed = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground pt-20 pb-12">
       <main className="container mx-auto px-4 flex-1">
-        <DigestSettingsModal />
+        <DigestSettingsModal
+          isOpen={isDigestSettingsModalOpen}
+          onOpenChange={setIsDigestSettingsModalOpen}
+          onDigestCreated={() => {
+            setIsDigestSettingsModalOpen(false); // Close modal
+            loadDigests(); // Refresh digests
+          }}
+        />
         <div className="relative border-l-2 border-border/20 pl-8">
           {digests.map((digest, index) => {
             if (digest.id_digests === 14) {
