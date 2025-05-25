@@ -9,7 +9,7 @@ load_dotenv()
 
 def client_init(agent_id_name: str, api_key_name: str) -> tuple:
 
-    agent_id = os.getenv(agent_id_name)
+    agent_id = 'agent_01jw19sps2fewsg3g3bqbpmd8y'
     api_key = os.getenv(api_key_name)
     elevenlabs = ElevenLabs(api_key=api_key)
 
