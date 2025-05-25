@@ -29,7 +29,7 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
           </button>
         </div>
         <div>
-          <elevenlabs-convai agent-id={agentId}></elevenlabs-convai>
+          <elevenlabs-convai agent-id={agentId}></elevenlabs-convai><script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
           {/* The script will be loaded in the main HTML or via a useEffect hook if preferred */}
         </div>
         <div className="mt-6 text-right">
