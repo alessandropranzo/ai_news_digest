@@ -9,20 +9,17 @@ load_dotenv()
 
 def client_init(agent_id_name: str, api_key_name: str) -> tuple:
 
-    agent_id = 'agent_01jw19sps2fewsg3g3bqbpmd8y'
+    agent_id = 'agent_01jw35p30ffgy9ydkkw3ky3r6m'
     api_key = os.getenv(api_key_name)
     elevenlabs = ElevenLabs(api_key=api_key)
 
     return elevenlabs, agent_id
 
-def conversation_init(elevenlabs: ElevenLabs, agent_id: str, dynamical_vars: dict) -> Conversation:
-    config = ConversationInitiationData(
-        dynamic_variables=dynamical_vars
-    )
+def conversation_init(elevenlabs: ElevenLabs, agent_id: str) -> Conversation:
+
     conversation = Conversation(
         elevenlabs,
         agent_id,
-        config=config,
         audio_interface=DefaultAudioInterface(),
 
         callback_agent_response=lambda response: print(f"Agent: {response}"),
@@ -32,10 +29,10 @@ def conversation_init(elevenlabs: ElevenLabs, agent_id: str, dynamical_vars: dic
 
     return conversation
 
-def conversation(agent_id_name: str, api_key_name: str, dynamical_vars: dict):
+def conversation(agent_id_name: str, api_key_name: str):
 
     elevenlabs, agent_id = client_init(agent_id_name, api_key_name)
-    conversation = conversation_init(elevenlabs, agent_id, dynamical_vars)
+    conversation = conversation_init(elevenlabs, agent_id)
 
     conversation.start_session()
     signal.signal(signal.SIGINT, lambda sig, frame: conversation.end_session())
